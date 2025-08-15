@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
-    header('Location: /raw-login.php');
+    header('Location: /login.php');
     exit;
 }
 
@@ -26,7 +26,7 @@ if ($_POST) {
             VALUES (?, ?, ?, ?, ?, ?, 0, ?, 'scheduled', ?, datetime('now'), datetime('now'))
         ");
         $stmt->execute([$user_id, $vehicle_id, $driver_id, $start_location, $end_location, $start_time, $distance, $purpose]);
-        header('Location: /raw-admin-trips.php');
+        header('Location: /admin-trips.php');
         exit;
     }
     
@@ -48,7 +48,7 @@ if ($_POST) {
             WHERE id = ?
         ");
         $stmt->execute([$user_id, $vehicle_id, $driver_id, $start_location, $end_location, $start_time, $distance, $status, $purpose, $trip_id]);
-        header('Location: /raw-admin-trips.php');
+        header('Location: /admin-trips.php');
         exit;
     }
     
@@ -56,7 +56,7 @@ if ($_POST) {
         $trip_id = $_POST['trip_id'] ?? 0;
         $stmt = $db->prepare("DELETE FROM trips WHERE id = ?");
         $stmt->execute([$trip_id]);
-        header('Location: /raw-admin-trips.php');
+        header('Location: /admin-trips.php');
         exit;
     }
 }
@@ -288,13 +288,13 @@ if (isset($_GET['edit'])) {
         <div>
             <h1>🚛 Trip Management</h1>
             <div class="nav-links">
-                <a href="/raw-dashboard.php">Dashboard</a>
-                <a href="/raw-admin-trips.php" class="active">Trips</a>
-                <a href="/raw-admin-users.php">Users</a>
-                <a href="/raw-admin-reports.php">Reports</a>
+                <a href="/dashboard.php">Dashboard</a>
+                <a href="/admin-trips.php" class="active">Trips</a>
+                <a href="/admin-users.php">Users</a>
+                <a href="/admin-reports.php">Reports</a>
             </div>
         </div>
-        <a href="/raw-login.php?logout=1" class="logout-btn">Logout</a>
+        <a href="/login.php?logout=1" class="logout-btn">Logout</a>
     </div>
 
     <div class="dashboard-grid">
@@ -386,7 +386,7 @@ if (isset($_GET['edit'])) {
                     <?= $edit_trip ? 'Update Trip' : 'Create Trip' ?>
                 </button>
                 <?php if ($edit_trip): ?>
-                    <a href="/raw-admin-trips.php" class="btn btn-warning">Cancel</a>
+                    <a href="/admin-trips.php" class="btn btn-warning">Cancel</a>
                 <?php endif; ?>
             </form>
         </div>

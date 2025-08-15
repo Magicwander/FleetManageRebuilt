@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
-    header('Location: /raw-login.php');
+    header('Location: /login.php');
     exit;
 }
 
@@ -330,13 +330,13 @@ if (isset($_GET['export']) && $_GET['export'] === 'csv') {
         <div>
             <h1>📊 Reports & Analytics</h1>
             <div class="nav-links">
-                <a href="/raw-dashboard.php">Dashboard</a>
-                <a href="/raw-admin-trips.php">Trips</a>
-                <a href="/raw-admin-users.php">Users</a>
-                <a href="/raw-admin-reports.php" class="active">Reports</a>
+                <a href="/dashboard.php">Dashboard</a>
+                <a href="/admin-trips.php">Trips</a>
+                <a href="/admin-users.php">Users</a>
+                <a href="/admin-reports.php" class="active">Reports</a>
             </div>
         </div>
-        <a href="/raw-login.php?logout=1" class="logout-btn">Logout</a>
+        <a href="/login.php?logout=1" class="logout-btn">Logout</a>
     </div>
 
     <div class="report-controls">

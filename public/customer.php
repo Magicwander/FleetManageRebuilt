@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'customer') {
-    header('Location: /raw-login.php');
+    header('Location: /login.php');
     exit;
 }
 
@@ -37,7 +37,7 @@ if ($_POST) {
                 VALUES (?, 1, 1, ?, ?, ?, 0, ?, 'scheduled', ?, datetime('now'), datetime('now'))
             ");
             $stmt->execute([$_SESSION['user_id'], $origin, $destination, $start_time, $distance, $purpose]);
-            header('Location: /raw-customer.php');
+            header('Location: /customer.php');
             exit;
         }
     }
@@ -57,7 +57,7 @@ if ($_POST) {
             WHERE id = ? AND user_id = ? AND status = 'scheduled'
         ");
         $stmt->execute([$origin, $destination, $distance, $start_time, $purpose, $trip_id, $_SESSION['user_id']]);
-        header('Location: /raw-customer.php');
+        header('Location: /customer.php');
         exit;
     }
     
@@ -71,7 +71,7 @@ if ($_POST) {
             WHERE id = ? AND user_id = ? AND status = 'scheduled'
         ");
         $stmt->execute([$trip_id, $_SESSION['user_id']]);
-        header('Location: /raw-customer.php');
+        header('Location: /customer.php');
         exit;
     }
 }
@@ -224,7 +224,7 @@ if ($_POST) {
             <h1>🚛 Customer Dashboard</h1>
             <p>Welcome, <?= htmlspecialchars($_SESSION['user_name']) ?>!</p>
         </div>
-        <a href="/raw-login.php?logout=1" class="logout-btn">Logout</a>
+        <a href="/login.php?logout=1" class="logout-btn">Logout</a>
     </div>
 
     <div class="dashboard-grid">
@@ -264,7 +264,7 @@ if ($_POST) {
                     <?= $edit_trip ? 'Update Booking' : 'Create Booking' ?>
                 </button>
                 <?php if ($edit_trip): ?>
-                    <a href="/raw-customer.php" class="btn" style="background: #6b7280;">Cancel</a>
+                    <a href="/customer.php" class="btn" style="background: #6b7280;">Cancel</a>
                 <?php endif; ?>
             </form>
         </div>

@@ -5,7 +5,7 @@ session_start();
 // Handle logout
 if (isset($_GET['logout'])) {
     session_destroy();
-    header('Location: /raw-login.php');
+    header('Location: /login.php');
     exit;
 }
 
@@ -27,11 +27,11 @@ if ($_POST) {
         $_SESSION['user_role'] = $user['role'];
         
         if ($user['role'] === 'admin') {
-            header('Location: /raw-dashboard.php');
+            header('Location: /dashboard.php');
         } elseif ($user['role'] === 'driver') {
-            header('Location: /raw-driver.php');
+            header('Location: /driver.php');
         } else {
-            header('Location: /raw-customer.php');
+            header('Location: /customer.php');
         }
         exit;
     } else {
@@ -44,7 +44,7 @@ if ($_POST) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FleetSync | Raw Login</title>
+    <title>FleetSync | Login</title>
     <style>
         * {
             margin: 0;
@@ -157,7 +157,7 @@ if ($_POST) {
     <div class="login-container">
         <div class="logo">
             <h1>🚛 FLEETSYNC</h1>
-            <p>Raw PHP Authentication</p>
+            <p>Fleet Management System</p>
         </div>
 
         <?php if (isset($error)): ?>
@@ -177,14 +177,20 @@ if ($_POST) {
                 <input type="password" id="password" name="password" required>
             </div>
 
-            <button type="submit" class="login-btn">Sign In (Raw PHP)</button>
+            <button type="submit" class="login-btn">Sign In</button>
         </form>
 
-        <div style="margin-top: 20px; text-align: center; color: #64748b; font-size: 14px;">
-            <p>Test Credentials:</p>
-            <p><strong>Admin:</strong> admin@fleet.com / admin123</p>
-            <p><strong>Customer:</strong> customer@fleet.com / customer123</p>
-            <p><strong>Driver:</strong> michael.johnson@fleetcompany.com / admin123</p>
+        <div style="margin-top: 20px; text-align: center;">
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 15px;">
+                Don't have an account? <a href="/register.php" style="color: #4361ee; text-decoration: none;">Register here</a>
+            </p>
+            
+            <div style="color: #64748b; font-size: 14px;">
+                <p>Test Credentials:</p>
+                <p><strong>Admin:</strong> admin@fleet.com / admin123</p>
+                <p><strong>Customer:</strong> customer@fleet.com / customer123</p>
+                <p><strong>Driver:</strong> michael.johnson@fleetcompany.com / admin123</p>
+            </div>
         </div>
     </div>
 </body>

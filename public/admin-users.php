@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
-    header('Location: /raw-login.php');
+    header('Location: /login.php');
     exit;
 }
 
@@ -26,7 +26,7 @@ if ($_POST) {
             ");
             $stmt->execute([$name, $email, $hashed_password, $role, $status]);
         }
-        header('Location: /raw-admin-users.php');
+        header('Location: /admin-users.php');
         exit;
     }
     
@@ -51,7 +51,7 @@ if ($_POST) {
             $stmt->execute([$hashed_password, $user_id]);
         }
         
-        header('Location: /raw-admin-users.php');
+        header('Location: /admin-users.php');
         exit;
     }
     
@@ -62,7 +62,7 @@ if ($_POST) {
             $stmt = $db->prepare("DELETE FROM users WHERE id = ?");
             $stmt->execute([$user_id]);
         }
-        header('Location: /raw-admin-users.php');
+        header('Location: /admin-users.php');
         exit;
     }
 }
@@ -317,13 +317,13 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <div>
             <h1>👥 User Management</h1>
             <div class="nav-links">
-                <a href="/raw-dashboard.php">Dashboard</a>
-                <a href="/raw-admin-trips.php">Trips</a>
-                <a href="/raw-admin-users.php" class="active">Users</a>
-                <a href="/raw-admin-reports.php">Reports</a>
+                <a href="/dashboard.php">Dashboard</a>
+                <a href="/admin-trips.php">Trips</a>
+                <a href="/admin-users.php" class="active">Users</a>
+                <a href="/admin-reports.php">Reports</a>
             </div>
         </div>
-        <a href="/raw-login.php?logout=1" class="logout-btn">Logout</a>
+        <a href="/login.php?logout=1" class="logout-btn">Logout</a>
     </div>
 
     <div class="dashboard-grid">
@@ -388,7 +388,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     <?= $edit_user ? 'Update User' : 'Create User' ?>
                 </button>
                 <?php if ($edit_user): ?>
-                    <a href="/raw-admin-users.php" class="btn btn-warning">Cancel</a>
+                    <a href="/admin-users.php" class="btn btn-warning">Cancel</a>
                 <?php endif; ?>
             </form>
         </div>

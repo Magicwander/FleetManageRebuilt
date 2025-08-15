@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'driver') {
-    header('Location: /raw-login.php');
+    header('Location: /login.php');
     exit;
 }
 
@@ -56,7 +56,7 @@ if ($_POST && isset($_POST['update_profile'])) {
         ");
         $stmt->execute([$phone, $address, $emergency_contact_name, $emergency_contact_phone, $driver['id']]);
     }
-    header('Location: /raw-driver.php');
+    header('Location: /driver.php');
     exit;
 }
 
@@ -80,7 +80,7 @@ if ($_POST && isset($_POST['update_trip_status'])) {
         $params[] = $driver_id;
         $stmt->execute($params);
     }
-    header('Location: /raw-driver.php');
+    header('Location: /driver.php');
     exit;
 }
 ?>
@@ -262,7 +262,7 @@ if ($_POST && isset($_POST['update_trip_status'])) {
             <h1>🚛 Driver Dashboard</h1>
             <p>Welcome, <?= htmlspecialchars($_SESSION['user_name']) ?>!</p>
         </div>
-        <a href="/raw-login.php?logout=1" class="logout-btn">Logout</a>
+        <a href="/login.php?logout=1" class="logout-btn">Logout</a>
     </div>
 
     <div class="dashboard-grid">

@@ -2,7 +2,7 @@
 session_start();
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
-    header('Location: /raw-login.php');
+    header('Location: /login.php');
     exit;
 }
 
@@ -156,14 +156,14 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div>
             <h1>🚛 Admin Dashboard</h1>
             <div style="display: flex; gap: 15px; margin-top: 10px;">
-                <a href="/raw-dashboard.php" style="color: #4361ee; text-decoration: none; padding: 8px 16px; background: rgba(67, 97, 238, 0.2); border-radius: 6px;">Dashboard</a>
-                <a href="/raw-admin-trips.php" style="color: #cbd5e1; text-decoration: none; padding: 8px 16px; border-radius: 6px;">Trips</a>
-                <a href="/raw-admin-users.php" style="color: #cbd5e1; text-decoration: none; padding: 8px 16px; border-radius: 6px;">Users</a>
-                <a href="/raw-admin-reports.php" style="color: #cbd5e1; text-decoration: none; padding: 8px 16px; border-radius: 6px;">Reports</a>
+                <a href="/dashboard.php" style="color: #4361ee; text-decoration: none; padding: 8px 16px; background: rgba(67, 97, 238, 0.2); border-radius: 6px;">Dashboard</a>
+                <a href="/admin-trips.php" style="color: #cbd5e1; text-decoration: none; padding: 8px 16px; border-radius: 6px;">Trips</a>
+                <a href="/admin-users.php" style="color: #cbd5e1; text-decoration: none; padding: 8px 16px; border-radius: 6px;">Users</a>
+                <a href="/admin-reports.php" style="color: #cbd5e1; text-decoration: none; padding: 8px 16px; border-radius: 6px;">Reports</a>
             </div>
             <p style="margin-top: 10px;">Welcome, <?= htmlspecialchars($_SESSION['user_name']) ?>!</p>
         </div>
-        <a href="/raw-login.php?logout=1" class="logout-btn">Logout</a>
+        <a href="/login.php?logout=1" class="logout-btn">Logout</a>
     </div>
 
     <div class="dashboard-grid">
