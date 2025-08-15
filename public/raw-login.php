@@ -28,6 +28,8 @@ if ($_POST) {
         
         if ($user['role'] === 'admin') {
             header('Location: /raw-dashboard.php');
+        } elseif ($user['role'] === 'driver') {
+            header('Location: /raw-driver.php');
         } else {
             header('Location: /raw-customer.php');
         }
@@ -182,6 +184,7 @@ if ($_POST) {
             <p>Test Credentials:</p>
             <p><strong>Admin:</strong> admin@fleet.com / admin123</p>
             <p><strong>Customer:</strong> customer@fleet.com / customer123</p>
+            <p><strong>Driver:</strong> michael.johnson@fleetcompany.com / admin123</p>
         </div>
     </div>
 </body>

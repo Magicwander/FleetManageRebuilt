@@ -14,18 +14,63 @@ $stmt = $db->prepare("SELECT * FROM trips WHERE user_id = ? ORDER BY created_at 
 $stmt->execute([$_SESSION['user_id']]);
 $trips = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Handle new trip creation
-if ($_POST && isset($_POST['create_trip'])) {
-    $origin = $_POST['origin'] ?? '';
-    $destination = $_POST['destination'] ?? '';
-    $distance = $_POST['distance'] ?? 0;
+// Get trip for editing if requested
+$edit_trip = null;
+if (isset($_GET['edit'])) {
+    $stmt = $db->prepare("SELECT * FROM trips WHERE id = ? AND user_id = ? AND status = 'scheduled'");
+    $stmt->execute([$_GET['edit'], $_SESSION['user_id']]);
+    $edit_trip = $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+// Handle trip operations
+if ($_POST) {
+    if (isset($_POST['create_trip'])) {
+        $origin = $_POST['origin'] ?? '';
+        $destination = $_POST['destination'] ?? '';
+        $distance = $_POST['distance'] ?? 0;
+        $start_time = $_POST['start_time'] ?? date('Y-m-d H:i:s', strtotime('+1 hour'));
+        $purpose = $_POST['purpose'] ?? 'Customer Request';
+        
+        if ($origin && $destination) {
+            $stmt = $db->prepare("
+                INSERT INTO trips (user_id, vehicle_id, driver_id, start_location, end_location, start_time, start_mileage, distance, status, purpose, created_at, updated_at) 
+                VALUES (?, 1, 1, ?, ?, ?, 0, ?, 'scheduled', ?, datetime('now'), datetime('now'))
+            ");
+            $stmt->execute([$_SESSION['user_id'], $origin, $destination, $start_time, $distance, $purpose]);
+            header('Location: /raw-customer.php');
+            exit;
+        }
+    }
     
-    if ($origin && $destination) {
+    if (isset($_POST['update_trip'])) {
+        $trip_id = $_POST['trip_id'] ?? 0;
+        $origin = $_POST['origin'] ?? '';
+        $destination = $_POST['destination'] ?? '';
+        $distance = $_POST['distance'] ?? 0;
+        $start_time = $_POST['start_time'] ?? '';
+        $purpose = $_POST['purpose'] ?? '';
+        
+        // Only allow editing if trip is still scheduled
         $stmt = $db->prepare("
-            INSERT INTO trips (user_id, vehicle_id, driver_id, start_location, end_location, start_time, start_mileage, distance, status, purpose, created_at, updated_at) 
-            VALUES (?, 1, 1, ?, ?, datetime('now'), 0, ?, 'scheduled', 'Customer Request', datetime('now'), datetime('now'))
+            UPDATE trips 
+            SET start_location = ?, end_location = ?, distance = ?, start_time = ?, purpose = ?, updated_at = datetime('now')
+            WHERE id = ? AND user_id = ? AND status = 'scheduled'
         ");
-        $stmt->execute([$_SESSION['user_id'], $origin, $destination, $distance]);
+        $stmt->execute([$origin, $destination, $distance, $start_time, $purpose, $trip_id, $_SESSION['user_id']]);
+        header('Location: /raw-customer.php');
+        exit;
+    }
+    
+    if (isset($_POST['cancel_trip'])) {
+        $trip_id = $_POST['trip_id'] ?? 0;
+        
+        // Only allow cancelling if trip is scheduled
+        $stmt = $db->prepare("
+            UPDATE trips 
+            SET status = 'cancelled', updated_at = datetime('now')
+            WHERE id = ? AND user_id = ? AND status = 'scheduled'
+        ");
+        $stmt->execute([$trip_id, $_SESSION['user_id']]);
         header('Location: /raw-customer.php');
         exit;
     }
@@ -184,24 +229,43 @@ if ($_POST && isset($_POST['create_trip'])) {
 
     <div class="dashboard-grid">
         <div class="card">
-            <h2>📝 Create New Trip</h2>
+            <h2><?= $edit_trip ? '✏️ Edit Booking' : '📝 Create New Booking' ?></h2>
             <form method="POST">
+                <?php if ($edit_trip): ?>
+                    <input type="hidden" name="trip_id" value="<?= $edit_trip['id'] ?>">
+                <?php endif; ?>
+                
                 <div class="form-group">
                     <label for="origin">Origin</label>
-                    <input type="text" id="origin" name="origin" required>
+                    <input type="text" id="origin" name="origin" value="<?= htmlspecialchars($edit_trip['start_location'] ?? '') ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label for="destination">Destination</label>
-                    <input type="text" id="destination" name="destination" required>
+                    <input type="text" id="destination" name="destination" value="<?= htmlspecialchars($edit_trip['end_location'] ?? '') ?>" required>
                 </div>
 
                 <div class="form-group">
                     <label for="distance">Distance (km)</label>
-                    <input type="number" id="distance" name="distance" step="0.1" required>
+                    <input type="number" id="distance" name="distance" step="0.1" value="<?= $edit_trip['distance'] ?? '' ?>" required>
                 </div>
 
-                <button type="submit" name="create_trip" class="btn">Create Trip</button>
+                <div class="form-group">
+                    <label for="start_time">Preferred Start Time</label>
+                    <input type="datetime-local" id="start_time" name="start_time" value="<?= $edit_trip ? date('Y-m-d\TH:i', strtotime($edit_trip['start_time'])) : '' ?>">
+                </div>
+
+                <div class="form-group">
+                    <label for="purpose">Purpose</label>
+                    <input type="text" id="purpose" name="purpose" value="<?= htmlspecialchars($edit_trip['purpose'] ?? '') ?>" placeholder="e.g., Business meeting, Personal travel">
+                </div>
+
+                <button type="submit" name="<?= $edit_trip ? 'update_trip' : 'create_trip' ?>" class="btn">
+                    <?= $edit_trip ? 'Update Booking' : 'Create Booking' ?>
+                </button>
+                <?php if ($edit_trip): ?>
+                    <a href="/raw-customer.php" class="btn" style="background: #6b7280;">Cancel</a>
+                <?php endif; ?>
             </form>
         </div>
 
@@ -213,22 +277,35 @@ if ($_POST && isset($_POST['create_trip'])) {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Origin</th>
-                        <th>Destination</th>
+                        <th>Route</th>
                         <th>Distance</th>
+                        <th>Start Time</th>
                         <th>Status</th>
-                        <th>Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($trips as $trip): ?>
                     <tr>
                         <td>#<?= $trip['id'] ?></td>
-                        <td><?= htmlspecialchars($trip['start_location']) ?></td>
-                        <td><?= htmlspecialchars($trip['end_location']) ?></td>
+                        <td>
+                            <?= htmlspecialchars($trip['start_location']) ?><br>
+                            <small style="color: #64748b;">→ <?= htmlspecialchars($trip['end_location']) ?></small>
+                        </td>
                         <td><?= $trip['distance'] ?> km</td>
-                        <td><span class="status <?= $trip['status'] ?>"><?= ucfirst($trip['status']) ?></span></td>
-                        <td><?= date('M j, Y', strtotime($trip['created_at'])) ?></td>
+                        <td><?= date('M j, Y H:i', strtotime($trip['start_time'])) ?></td>
+                        <td><span class="status <?= $trip['status'] ?>"><?= ucfirst(str_replace('_', ' ', $trip['status'])) ?></span></td>
+                        <td>
+                            <?php if ($trip['status'] === 'scheduled'): ?>
+                                <a href="?edit=<?= $trip['id'] ?>" class="btn" style="padding: 6px 12px; font-size: 12px; background: #f59e0b;">Edit</a>
+                                <form method="POST" style="display: inline;">
+                                    <input type="hidden" name="trip_id" value="<?= $trip['id'] ?>">
+                                    <button type="submit" name="cancel_trip" class="btn" style="padding: 6px 12px; font-size: 12px; background: #ef4444;" onclick="return confirm('Are you sure you want to cancel this booking?')">Cancel</button>
+                                </form>
+                            <?php else: ?>
+                                <span style="color: #64748b; font-size: 12px;">No actions</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

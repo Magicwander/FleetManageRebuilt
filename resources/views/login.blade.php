@@ -132,6 +132,7 @@
         @endif
 
         <form method="POST" action="/login">
+            @csrf
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email" required>

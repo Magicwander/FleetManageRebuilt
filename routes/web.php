@@ -1,24 +1,24 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 
-// Authentication Routes (No CSRF)
-Route::get('/login', [AuthController::class, 'showLogin']);
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/logout', [AuthController::class, 'logout']);
-
+// Redirect all routes to raw PHP login system
 Route::get('/', function () {
-    return redirect('/login');
+    return redirect('/raw-login.php');
 });
 
-// Dashboard routes (protected)
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return '<h1>Admin Dashboard</h1><p>Welcome ' . auth()->user()->name . '</p><a href="/logout">Logout</a>';
-    });
-    
-    Route::get('/customer-dashboard', function () {
-        return '<h1>Customer Dashboard</h1><p>Welcome ' . auth()->user()->name . '</p><a href="/logout">Logout</a>';
-    });
+Route::get('/login', function () {
+    return redirect('/raw-login.php');
+});
+
+Route::get('/dashboard', function () {
+    return redirect('/raw-dashboard.php');
+});
+
+Route::get('/customer-dashboard', function () {
+    return redirect('/raw-customer.php');
+});
+
+Route::get('/logout', function () {
+    return redirect('/raw-login.php?logout=1');
 });

@@ -155,7 +155,13 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="header">
         <div>
             <h1>🚛 Admin Dashboard</h1>
-            <p>Welcome, <?= htmlspecialchars($_SESSION['user_name']) ?>!</p>
+            <div style="display: flex; gap: 15px; margin-top: 10px;">
+                <a href="/raw-dashboard.php" style="color: #4361ee; text-decoration: none; padding: 8px 16px; background: rgba(67, 97, 238, 0.2); border-radius: 6px;">Dashboard</a>
+                <a href="/raw-admin-trips.php" style="color: #cbd5e1; text-decoration: none; padding: 8px 16px; border-radius: 6px;">Trips</a>
+                <a href="/raw-admin-users.php" style="color: #cbd5e1; text-decoration: none; padding: 8px 16px; border-radius: 6px;">Users</a>
+                <a href="/raw-admin-reports.php" style="color: #cbd5e1; text-decoration: none; padding: 8px 16px; border-radius: 6px;">Reports</a>
+            </div>
+            <p style="margin-top: 10px;">Welcome, <?= htmlspecialchars($_SESSION['user_name']) ?>!</p>
         </div>
         <a href="/raw-login.php?logout=1" class="logout-btn">Logout</a>
     </div>
