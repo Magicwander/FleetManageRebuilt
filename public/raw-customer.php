@@ -22,8 +22,8 @@ if ($_POST && isset($_POST['create_trip'])) {
     
     if ($origin && $destination) {
         $stmt = $db->prepare("
-            INSERT INTO trips (user_id, origin, destination, distance, status, created_at, updated_at) 
-            VALUES (?, ?, ?, ?, 'pending', datetime('now'), datetime('now'))
+            INSERT INTO trips (user_id, vehicle_id, driver_id, start_location, end_location, start_time, start_mileage, distance, status, purpose, created_at, updated_at) 
+            VALUES (?, 1, 1, ?, ?, datetime('now'), 0, ?, 'scheduled', 'Customer Request', datetime('now'), datetime('now'))
         ");
         $stmt->execute([$_SESSION['user_id'], $origin, $destination, $distance]);
         header('Location: /raw-customer.php');
@@ -224,8 +224,8 @@ if ($_POST && isset($_POST['create_trip'])) {
                     <?php foreach ($trips as $trip): ?>
                     <tr>
                         <td>#<?= $trip['id'] ?></td>
-                        <td><?= htmlspecialchars($trip['origin']) ?></td>
-                        <td><?= htmlspecialchars($trip['destination']) ?></td>
+                        <td><?= htmlspecialchars($trip['start_location']) ?></td>
+                        <td><?= htmlspecialchars($trip['end_location']) ?></td>
                         <td><?= $trip['distance'] ?> km</td>
                         <td><span class="status <?= $trip['status'] ?>"><?= ucfirst($trip['status']) ?></span></td>
                         <td><?= date('M j, Y', strtotime($trip['created_at'])) ?></td>

@@ -213,8 +213,8 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?= htmlspecialchars($trip['user_name'] ?? 'Unknown') ?><br>
                         <small><?= htmlspecialchars($trip['user_email'] ?? 'N/A') ?></small>
                     </td>
-                    <td><?= htmlspecialchars($trip['origin']) ?></td>
-                    <td><?= htmlspecialchars($trip['destination']) ?></td>
+                    <td><?= htmlspecialchars($trip['start_location']) ?></td>
+                    <td><?= htmlspecialchars($trip['end_location']) ?></td>
                     <td><?= $trip['distance'] ?> km</td>
                     <td><span class="status <?= $trip['status'] ?>"><?= ucfirst($trip['status']) ?></span></td>
                     <td><?= date('M j, Y', strtotime($trip['created_at'])) ?></td>
